@@ -1,80 +1,44 @@
 import autogen
 import os
-from typing import Optional, Union, List, Dict, Any
-import requests  # For API calls to various services
+from typing import Optional, Dict, Any
+import google.generativeai as genai  # pip install google-generativeai
 
 def create_runbook_from_steps(
     issue_description: str, 
     output_file: str = "runbook.md", 
-    api_key: Optional[str] = None,
-    model: str = "gpt-3.5-turbo",  # Default OpenAI model
-    use_open_source_llm: bool = False,
-    open_source_config: Optional[Dict[str, Any]] = None,
-    use_gemini: bool = False,
     gemini_api_key: Optional[str] = None,
-    use_ollama: bool = False,
-    ollama_model: str = "llama3"
+    model: str = "gemini-pro"  # Default to Google's Gemini Pro model
 ):
     """
-    Create a runbook from identified fix steps using AutoGen agents.
+    Create a runbook from identified fix steps using AutoGen agents with Google Gemini.
     
     Args:
         issue_description (str): Description of the issue and identified fix steps
         output_file (str): File path to save the generated runbook
-        api_key (str, optional): OpenAI API key. If None, will use OPENAI_API_KEY environment variable
-        model (str): The model to use, default is "gpt-4"
+        gemini_api_key (str, optional): Google Gemini API key. If None, will use GOOGLE_API_KEY environment variable
+        model (str): The model to use, default is "gemini-pro"
     
     Returns:
         str: Path to the saved runbook file
     """
-    # Set up the API key
-    if api_key:
-        os.environ["OPENAI_API_KEY"] = api_key
-    elif not os.environ.get("OPENAI_API_KEY"):
-        raise ValueError("OpenAI API key not provided. Set it as an argument or as OPENAI_API_KEY environment variable.")
+    # Set up the API key for Gemini
+    if gemini_api_key:
+        os.environ["GOOGLE_API_KEY"] = 'AIzaSyCqNI95axOXHF53c4SDtElyZ75F__mMKwY'
+    elif not os.environ.get("GOOGLE_API_KEY"):
+        raise ValueError("Google API key not provided. Set it as an argument or as GOOGLE_API_KEY environment variable.")
     
-    # Configuration for the LLM
-    if use_gemini:
-        # Set up Gemini API key
-        if gemini_api_key:
-            os.environ["GOOGLE_API_KEY"] = gemini_api_key
-        elif not os.environ.get("GOOGLE_API_KEY"):
-            raise ValueError("Google API key not provided. Set it as an argument or as GOOGLE_API_KEY environment variable.")
-        
-        # Use Google Gemini configuration
-        config_list = [
-            {
-                "model": "gemini-pro",  # Gemini Pro model
-                "api_key": os.environ.get("GOOGLE_API_KEY"),
-                "api_type": "google",
-                "api_base": "https://generativelanguage.googleapis.com/v1beta/models",
-            }
-        ]
-    elif use_ollama:
-        # Configure for Ollama (completely free, runs locally)
-        config_list = [
-            {
-                "model": ollama_model,
-                "api_base": "http://localhost:11434/api",  # Default Ollama API endpoint
-                "api_type": "ollama",
-            }
-        ]
-    elif use_open_source_llm and open_source_config:
-        # Use open source model configuration
-        config_list = [open_source_config]
-    else:
-        # Use OpenAI API
-        if api_key:
-            os.environ["OPENAI_API_KEY"] = api_key
-        elif not os.environ.get("OPENAI_API_KEY"):
-            raise ValueError("OpenAI API key not provided. Set it as an argument or as OPENAI_API_KEY environment variable.")
-            
-        config_list = [
-            {
-                "model": model,
-                "api_key": os.environ.get("OPENAI_API_KEY"),
-            }
-        ]
+    # Initialize the Google Generative AI library
+    genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+    
+    # Configuration for AutoGen with Gemini
+    config_list = [
+        {
+            "model": model,
+            "api_key": os.environ.get("GOOGLE_API_KEY"),
+            "api_type": "google",
+            "api_base": "https://generativelanguage.googleapis.com/v1beta/models",
+        }
+    ]
     
     llm_config = {
         "config_list": config_list,
@@ -223,7 +187,7 @@ When the process is complete, Formatter should provide the final markdown docume
     print(f"Runbook created and saved to '{output_file}'")
     return output_file
 
-# Example usage with different model options
+# Example usage
 if __name__ == "__main__":
     # Example issue description with fix steps
     example_issue = """
@@ -256,43 +220,13 @@ if __name__ == "__main__":
        - Configure load balancer to distribute traffic
     """
     
-    # OPTION 1: Using Ollama (100% FREE, runs locally)
-    """
-    # First install Ollama from https://ollama.ai/
-    # Then run: ollama run llama3
-    create_runbook_from_steps(
-        example_issue, 
-        "server_crash_runbook.md",
-        use_ollama=True,
-        ollama_model="llama3"  # Other options: mistral, codellama, etc.
-    )
-    """
+    # To use with Gemini (free tier):
+    # 1. Get API key from https://aistudio.google.com/app/apikey
+    # 2. Install required packages: pip install pyautogen google-generativeai
     
-    # OPTION 2: Using Google's Gemini (FREE tier with limits)
-    """
-    # Get API key from https://aistudio.google.com/app/apikey
-    # pip install google-generativeai
-    create_runbook_from_steps(
-        example_issue, 
-        "server_crash_runbook.md",
-        use_gemini=True,
-        gemini_api_key="your_gemini_api_key"  # Or set GOOGLE_API_KEY in environment
-    )
-    """
-    
-    # OPTION 3: Using OpenAI's less expensive GPT-3.5-turbo model
-    # create_runbook_from_steps(example_issue, "server_crash_runbook.md", model="gpt-3.5-turbo")
-    
-    # OPTION 4: Using Hugging Face Inference API (FREE tier available)
-    """
-    create_runbook_from_steps(
-        example_issue, 
-        "server_crash_runbook.md",
-        use_open_source_llm=True,
-        open_source_config={
-            "model": "huggingface/mistralai/Mixtral-8x7B-Instruct-v0.1",
-            "api_base": "https://api-inference.huggingface.co/models/", 
-            "api_key": "your_huggingface_token"  # Get from huggingface.co/settings/tokens
-        }
-    )
-    """
+    # Uncomment and replace with your API key to run:
+    # create_runbook_from_steps(
+    #     example_issue, 
+    #     "server_crash_runbook.md",
+    #     gemini_api_key="your_gemini_api_key"  # Or set GOOGLE_API_KEY in environment
+    # )
