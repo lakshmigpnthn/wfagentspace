@@ -1,0 +1,51 @@
+Application ID,Application Name,Incident Number,Severity,Description,Time of Incident,Error Message
+APP001,InventoryPlus,INC001,High,Database connection failure,3/25/2025 14:30,Unable to connect to the database server
+APP002,FinanceTool,INC002,Medium,Report generation timeout,3/26/2025 9:45,Request timed out after 30 seconds
+APP003,HRManager,INC003,Low,UI layout distortion on mobile,3/27/2025 11:10,Unsupported view for mobile resolution
+APP004,OrderManager,INC004,Critical,Order processing system crash,3/28/2025 17:20,System encountered an unexpected error
+APP005,DeliveryTrack,INC005,High,GPS tracking failure,3/29/2025 16:05,GPS module initialization error
+APP006,TimeTracker,INC006,Medium,Inconsistent timestamps in logs,3/30/2025 8:50,Invalid timestamp format detected
+APP007,ExpenseManager,INC007,Low,Incorrect currency conversion rate,3/31/2025 10:30,Currency rate data missing
+APP008,PayrollService,INC008,Critical,Incorrect payroll deductions,4/1/2025 12:15,Tax calculation error
+APP009,SupportDesk,INC009,Medium,Feedback submission error,4/2/2025 14:40,Invalid input detected in form
+APP010,ChatAssistant,INC010,Low,Delayed response for queries,4/3/2025 18:30,Response delay due to network lag
+APP011,CRMPlus,INC011,Critical,API integration failure,4/4/2025 9:00,Authentication token missing
+APP012,SalesForceConnect,INC012,High,Data duplication issue,4/5/2025 14:20,Duplicate records found in database
+APP013,EventScheduler,INC013,Medium,Event creation failure,4/6/2025 11:15,Invalid event time provided
+APP014,MarketingSuite,INC014,Low,Email template formatting issue,4/7/2025 16:40,Unsupported HTML tags used
+APP015,AnalyticsTool,INC015,Medium,Dashboard not loading,4/8/2025 10:50,Request timed out
+APP016,InventoryPlus,INC016,High,Incorrect stock count,4/9/2025 13:30,Data synchronization error
+APP017,FinanceTool,INC017,Critical,Payment processing failure,4/10/2025 15:10,Transaction declined due to invalid input
+APP018,HRManager,INC018,Low,Employee record update error,4/11/2025 9:45,Field validation failed
+APP019,OrderManager,INC019,High,Order fulfillment delay,4/12/2025 14:25,Warehouse response timeout
+APP020,DeliveryTrack,INC020,Critical,Route optimization crash,4/13/2025 18:55,Null reference encountered
+APP021,TimeTracker,INC021,Medium,Login issue for users,4/14/2025 8:30,Session expired unexpectedly
+APP022,ExpenseManager,INC022,Low,Receipt upload error,4/15/2025 10:05,File format not supported
+APP023,PayrollService,INC023,High,Deductions mismatch,4/16/2025 12:40,Invalid deduction type
+APP024,SupportDesk,INC024,Medium,Ticket assignment failure,4/17/2025 13:15,Agent not found
+APP025,ChatAssistant,INC025,Low,Spelling errors in responses,4/18/2025 15:50,Typographical errors in script
+APP026,CRMPlus,INC026,Critical,Customer data breach,4/19/2025 7:40,Unauthorized access detected
+APP027,SalesForceConnect,INC027,High,Integration failure with ERP,4/20/2025 11:30,Connection refused
+APP028,EventScheduler,INC028,Medium,Recurring event deletion failure,4/21/2025 9:20,Event ID not found
+APP029,MarketingSuite,INC029,Low,Social media post scheduling error,4/22/2025 14:00,Invalid time zone selected
+APP030,AnalyticsTool,INC030,Medium,Data export failure,4/23/2025 16:30,File not generated
+APP031,InventoryPlus,INC031,High,Low stock alert failure,4/24/2025 9:10,Threshold configuration missing
+APP032,FinanceTool,INC032,Critical,Double payment processing,4/25/2025 14:35,Duplicate payment request
+APP033,HRManager,INC033,Low,New hire onboarding delay,4/26/2025 12:25,Access permissions not granted
+APP034,OrderManager,INC034,Medium,Order cancellation failure,4/27/2025 13:40,Invalid order ID
+APP035,DeliveryTrack,INC035,High,Package misrouting,4/28/2025 17:10,Incorrect GPS coordinates
+APP036,TimeTracker,INC036,Medium,Task timer reset issue,4/29/2025 10:20,Task ID not found
+APP037,ExpenseManager,INC037,Low,Expense approval delay,4/30/2025 11:50,Approval workflow not triggered
+APP038,PayrollService,INC038,Critical,Tax over-calculation,5/1/2025 9:40,Incorrect tax rate applied
+APP039,SupportDesk,INC039,Medium,Knowledge base search failure,5/2/2025 13:00,No results found
+APP040,ChatAssistant,INC040,Low,Default avatar missing,5/3/2025 15:20,Image path not set
+APP041,CRMPlus,INC041,High,Custom report generation crash,5/4/2025 8:30,Query execution failed
+APP042,SalesForceConnect,INC042,Medium,Pipeline synchronization delay,5/5/2025 14:15,Timeout during synchronization
+APP043,EventScheduler,INC043,Low,Event reminder not sent,5/6/2025 16:05,Reminder configuration missing
+APP044,MarketingSuite,INC044,Medium,Lead scoring algorithm issue,5/7/2025 11:45,Incorrect scoring model applied
+APP045,AnalyticsTool,INC045,High,Incorrect trend analysis graph,5/8/2025 9:55,Invalid data points
+APP046,InventoryPlus,INC046,Critical,Stock reconciliation failure,5/9/2025 13:25,Reconciliation process aborted
+APP047,FinanceTool,INC047,Medium,Account balance mismatch,5/10/2025 15:15,Incorrect balance calculation
+APP048,HRManager,INC048,Low,Leave application submission failure,5/11/2025 10:35,Invalid leave type selected
+APP049,OrderManager,INC049,High,Order status not updating,5/12/2025 12:50,Database update failed
+APP050,DeliveryTrack,INC050,Critical,Delivery assignment failure,5/13/2025 18:30,Driver not assigned

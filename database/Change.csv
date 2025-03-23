@@ -1,0 +1,51 @@
+Application ID,Application Name,Change Number,Scheduled Date,Description,Impacted Applications
+APP001,InventoryPlus,CHG001,3/25/2025,System upgrade for performance,"FinanceTool, OrderManager"
+APP002,FinanceTool,CHG002,3/28/2025,Security patch application,InventoryPlus
+APP003,HRManager,CHG003,4/1/2025,Integration with PayrollService,PayrollService
+APP004,OrderManager,CHG004,4/3/2025,Bug fixes and feature enhancements,"InventoryPlus, DeliveryTrack"
+APP005,DeliveryTrack,CHG005,4/7/2025,Mobile app update for drivers,OrderManager
+APP006,TimeTracker,CHG006,3/26/2025,Timezone synchronization fix,ProjectPlanner
+APP007,ExpenseManager,CHG007,3/27/2025,Expense report automation enhancement,FinanceTool
+APP008,PayrollService,CHG008,3/29/2025,Payroll calculation updates,HRManager
+APP009,SupportDesk,CHG009,3/30/2025,Customer feedback module update,ChatAssistant
+APP010,ChatAssistant,CHG010,3/31/2025,Improved natural language understanding,SupportDesk
+APP011,CRMPlus,CHG011,4/2/2025,API endpoint optimization,SalesForceConnect
+APP012,SalesForceConnect,CHG012,4/4/2025,Data pipeline resilience upgrade,CRMPlus
+APP013,EventScheduler,CHG013,4/5/2025,Calendar sync bug fix,TimeTracker
+APP014,MarketingSuite,CHG014,4/6/2025,Lead generation automation upgrade,CRMPlus
+APP015,AnalyticsTool,CHG015,4/8/2025,Visualization component enhancement,MarketingSuite
+APP016,InventoryPlus,CHG016,4/9/2025,Database indexing optimization,OrderManager
+APP017,FinanceTool,CHG017,4/10/2025,User interface overhaul,HRManager
+APP018,HRManager,CHG018,4/11/2025,Performance appraisal module improvement,PayrollService
+APP019,OrderManager,CHG019,4/12/2025,Order tracking bug fix,DeliveryTrack
+APP020,DeliveryTrack,CHG020,4/13/2025,Route optimization update,OrderManager
+APP021,KnowledgeBase,CHG021,4/14/2025,Search functionality enhancement,SupportDesk
+APP022,ITServiceDesk,CHG022,4/15/2025,Incident management workflow update,ChatAssistant
+APP023,ProcurementPortal,CHG023,4/16/2025,Supplier data upload improvement,FinanceTool
+APP024,AssetTracker,CHG024,4/17/2025,Equipment maintenance tracker,InventoryPlus
+APP025,ProjectPlanner,CHG025,4/18/2025,Gantt chart module optimization,TimeTracker
+APP026,TimeTracker,CHG026,4/19/2025,Attendance tracking bug fix,ProjectPlanner
+APP027,SalesAnalyzer,CHG027,4/20/2025,Revenue trend analysis module update,AnalyticsTool
+APP028,SupportDesk,CHG028,4/21/2025,Multi-language support enhancement,ChatAssistant
+APP029,ChatAssistant,CHG029,4/22/2025,Improved response time,SupportDesk
+APP030,DeliveryTrack,CHG030,4/23/2025,Driver feedback module update,OrderManager
+APP031,InventoryPlus,CHG031,4/24/2025,Stock replenishment logic optimization,FinanceTool
+APP032,FinanceTool,CHG032,4/25/2025,Financial forecasting tool upgrade,HRManager
+APP033,HRManager,CHG033,4/26/2025,Employee engagement tracker,PayrollService
+APP034,OrderManager,CHG034,4/27/2025,New discount feature,CRMPlus
+APP035,MarketingSuite,CHG035,4/28/2025,A/B testing module enhancement,AnalyticsTool
+APP036,EventScheduler,CHG036,4/29/2025,Integration with CalendarTool,TimeTracker
+APP037,SalesForceConnect,CHG037,4/30/2025,Improved deal tracking,CRMPlus
+APP038,ProcurementPortal,CHG038,5/1/2025,Vendor payment tracking update,FinanceTool
+APP039,AssetTracker,CHG039,5/2/2025,Asset deprecation calculation,InventoryPlus
+APP040,KnowledgeBase,CHG040,5/3/2025,Article tagging feature update,SupportDesk
+APP041,AnalyticsTool,CHG041,5/4/2025,Data export functionality upgrade,MarketingSuite
+APP042,EventScheduler,CHG042,5/5/2025,Dynamic time zone adjustment,CalendarTool
+APP043,MarketingSuite,CHG043,5/6/2025,Social media integration enhancement,CRMPlus
+APP044,TimeTracker,CHG044,5/7/2025,Integration with AttendancePro,ProjectPlanner
+APP045,DeliveryTrack,CHG045,5/8/2025,Real-time GPS tracking update,OrderManager
+APP046,OrderManager,CHG046,5/9/2025,Bulk order processing improvement,DeliveryTrack
+APP047,HRManager,CHG047,5/10/2025,HR policy library upgrade,PayrollService
+APP048,FinanceTool,CHG048,5/11/2025,Compliance reporting automation,InventoryPlus
+APP049,InventoryPlus,CHG049,5/12/2025,Warehouse capacity planning tool,FinanceTool
+APP050,SupportDesk,CHG050,5/13/2025,Customer satisfaction survey enhancement,ChatAssistant
