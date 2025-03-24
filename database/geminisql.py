@@ -14,7 +14,20 @@ from google import genai
 from google.genai import types
 ## Configure Genai Key
 
-GEMINI_API_KEY=os.environ.get("GOOGLE_API_KEY")
+
+from dotenv import load_dotenv
+load_dotenv() ## load all the environemnt variables
+
+import streamlit as st
+import os
+import sqlite3
+
+from google import genai
+from google.genai import types
+import sys
+## Configure Genai Key
+
+GEMINI_API_KEY=os.environ.get("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 print('Client initialized')
@@ -71,22 +84,32 @@ prompt=[
 
 
 ]
+# Allow reading from standard input for testing purposes
 
-## Streamlit App
+print("Enter your question:")
+question = input().strip()
+response = get_gemini_response(question, prompt)
+#print("Generated SQL Query:", response)
+response_text = response
+#print(response_text)
+response = read_sql_query(response, "WfMar2025_1.db")
+#print("The Response is:")
 
-st.set_page_config(page_title="I can Retrieve Any SQL query")
-st.header("Gemini App To Retrieve SQL Data")
+for row in response:
+        response_text += str(row) + '\n'
 
-question=st.text_input("Input: ",key="input")
+#print(f'res txt is {response_text}')
 
-submit=st.button("Ask the question")
+prompt1=[
+    """
+    You are an expert in analysing output of SQL queries. You are asked to analyse the output of a SQL query on the SQLite database and provide insights using the data.
+    The SQL database has the tables incident, change and errorlog. Summarize the output of the sql in context with the question and provide meaningful answers. 
+    show only analysis on the actal query output and tell query does not return data if it does not return any data.
 
-# if submit is clicked
-if submit:
-    response=get_gemini_response(question,prompt)
-    print(response)
-    response=read_sql_query(response,"WfMar2025_1.db")
-    st.subheader("The REsponse is")
-    for row in response:
-        print(row)
-        st.header(row)
+    """
+
+
+]
+
+response1 = get_gemini_response(response_text, prompt1)
+print(response1)
