@@ -6,7 +6,9 @@
     "application_affected": "mortgagelending",
     "start_date": "2023-10-01T10:15:00Z",
     "priority": "P1",
-	"parentObject": ""
+	"parentObject": "",
+	"upstream": "paymentgateway",
+    "downstream": "db"
   },
   {
     "incident_id": "INC-2",
@@ -15,7 +17,9 @@
     "application_affected": "safeagent",
     "start_date": "2023-10-02T14:30:00Z",
     "priority": "P2",
-	"parentObject": ""
+	"parentObject": "",
+	"upstream": "paymentgateway",
+    "downstream": ""
   },
   {
     "incident_id": "INC-3",
@@ -24,7 +28,9 @@
     "application_affected": "swift",
     "start_date": "2023-10-03T09:45:00Z",
     "priority": "P3",
-	"parentObject": "Deployment/swift"
+	"parentObject": "Deployment/swift",
+	"upstream": "",
+    "downstream": "db"
   },
   {
     "incident_id": "INC-4",
@@ -33,7 +39,9 @@
     "application_affected": "mortgagelending",
     "start_date": "2023-10-04T11:00:00Z",
     "priority": "P1",
-	"parentObject": "Deployment/mortgagelending"
+	"parentObject": "Deployment/mortgagelending",
+	"upstream": "",
+    "downstream": ""
   },
   {
     "incident_id": "INC-5",
@@ -42,6 +50,8 @@
     "application_affected": "API Gateway",
     "start_date": "2023-10-05T15:20:00Z",
     "priority": "P2",
-	"parentObject": "Deployment/safeagent"
+	"parentObject": "Deployment/safeagent",
+	"upstream": "paymentgateway",
+    "downstream": "db"
   }
 ]

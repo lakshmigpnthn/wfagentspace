@@ -1,61 +1,59 @@
 ```bash
 #!/bin/bash
 
-# Incident Details:
-# - Issue: 0/4 nodes are available: 2 Insufficient memory, 3 Insufficient cpu. preemption: 0/4 nodes are available: 4 No preemption victims found for incoming pod.
-# - Application Affected: mortgagelending
-# - Start Date: 4/10/2023, 4:30:00 pm
-# - Priority: P1
+# Script to resolve the issue of excess replicas for the mortgagelending deployment.
 
-# Script to resolve node resource exhaustion for the 'mortgagelending' application.
+# --- Variables ---
+DEPLOYMENT_NAME="mortgagelending"
+NAMESPACE="default" # Replace with the correct namespace if different
 
-# --- Step 1: Stop the affected services ---
+# --- Functions ---
 
-echo "Stopping mortgagelending services..."
+function log_info() {
+  echo "$(date +"%Y-%m-%d %H:%M:%S") [INFO] $*"
+}
 
-# Assuming the application is deployed using Kubernetes
-kubectl scale deployment mortgagelending --replicas=0
+function log_error() {
+  echo "$(date +"%Y-%m-%d %H:%M:%S") [ERROR] $*" >&2
+}
 
-# Alternatively, if using systemd:
-# systemctl stop mortgagelending.service
-
-# Add other service stop commands as needed based on your deployment method
-
-
-# --- Step 2: Apply necessary fixes ---
-
-echo "Applying fixes..."
+function check_kubectl() {
+  if ! command -v kubectl &> /dev/null; then
+    log_error "kubectl not found. Please install kubectl."
+    exit 1
+  fi
+}
 
 
-# Option A: Increase node resources (if possible)
-# This requires cluster administrator privileges and is a longer-term solution
-# kubectl edit node <node_name>  #  Increase CPU and memory requests/limits
+# --- Main Script ---
+
+check_kubectl
+
+log_info "Starting remediation for deployment: $DEPLOYMENT_NAME in namespace: $NAMESPACE"
 
 
-# Option B: Optimize resource requests/limits for the application
-echo "Optimizing resource requests/limits..."
+# 1. Scale down the deployment to 0 replicas to stop the service.  This is generally safer than directly stopping pods.
+log_info "Scaling down deployment $DEPLOYMENT_NAME to 0 replicas..."
+kubectl scale deployment "$DEPLOYMENT_NAME" --replicas=0 -n "$NAMESPACE" || { log_error "Failed to scale down deployment."; exit 1; }
 
-# Update the deployment YAML file (e.g., mortgagelending.yaml) with appropriate resource requests and limits
-# Example:
-# resources:
-#   requests:
-#     cpu: "500m"
-#     memory: "512Mi"
-#   limits:
-#     cpu: "1000m"
-#     memory: "1Gi"
-
-# Apply the updated YAML:
-kubectl apply -f mortgagelending.yaml
+# Wait for the pods to terminate.  This is crucial.
+log_info "Waiting for pods to terminate..."
+while kubectl get pods -n "$NAMESPACE" -l app="$DEPLOYMENT_NAME" | grep -q Running; do
+    sleep 5
+    log_info "Still waiting for pods to terminate..."
+done
 
 
-# Option C: Identify and terminate resource-intensive pods not related to the application (if preemption failed)
-echo "Checking for resource-intensive pods..."
+# 2. Apply necessary fixes (placeholders for actual fixes). 
+#    In a real scenario, this section would contain commands to address the root cause
+#    of the extra replicas. This might involve:
+#    - Checking the deployment configuration for errors.
+#    - Investigating replica controllers or replica sets.
+#    - Examining Horizontal Pod Autoscalers (HPAs).
+#    - Rolling back to a previous deployment version if necessary.
 
-# Find pods consuming high resources (adapt thresholds as needed)
-kubectl top pods --all-namespaces | awk '$2 > 75 || $3 > 500 {print $1, $2, $3}' # CPU > 75%, Memory > 500Mi
 
-# Manually inspect and delete non-essential pods if identified
+log_info "Applying fixes..."
 
-
-# Option D: Implement Horizontal Pod
+# Example: Checking HPA (replace with your actual fix)
+kubectl get hpa -n "$NAMESPACE" -l app="$DEPLOY

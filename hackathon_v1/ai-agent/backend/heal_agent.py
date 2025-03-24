@@ -5,7 +5,7 @@ from typing import Optional
 
 # Hardcode the API keys
 os.environ["OPENAI_API_KEY"] = "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"
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDDkEk07-Y9ISJXKTWyJBArz19mYXMPEwM"
+os.environ["GOOGLE_API_KEY"] = "AIzaSyALENrXIslUHsrTlwHqV_qpItxC17J08co"
 
 def generate_heal_script_with_model(issue_description, openai_api_key=None, gemini_api_key=None, openai_model="gpt-3.5-turbo"):
     """
