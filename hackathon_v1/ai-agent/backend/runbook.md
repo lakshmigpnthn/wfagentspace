@@ -1,95 +1,92 @@
-# Runbook: Kubernetes Pod Scheduling Failure - mortgagelending Application
+# Runbook: Resolving Redundant Replica for mortgagelending Deployment
 
 ## Executive Summary
 
-This runbook outlines the steps to resolve a P1 incident where the `mortgagelending` application is unavailable due to insufficient resources (CPU and memory) in the Kubernetes cluster, preventing pod scheduling. The issue manifests as "0/4 nodes are available: 2 Insufficient memory, 3 Insufficient cpu. preemption: 0/4 nodes are available: 4 No preemption victims found for incoming pod."  This document provides a structured approach to diagnose, resolve, and verify the issue, including rollback steps if necessary.
-
+This runbook outlines the steps to resolve an issue where the `mortgagelending` deployment has two available replicas despite being configured for one. This redundancy can lead to resource wastage and potential inconsistencies.  This document provides a structured approach to safely reduce the replica count to the desired state.
 
 ## Detailed Issue Description and Impact
 
-The `mortgagelending` application is currently unavailable because Kubernetes cannot schedule its pods. The cluster reports insufficient CPU and memory resources on all four nodes.  Preemption is also failing, indicating that no lower-priority pods can be evicted to make room for the `mortgagelending` pods. This outage is impacting all users of the `mortgagelending` application, potentially disrupting loan processing and causing significant business impact.
-
+On 1/10/2023 at 3:45:00 pm, the `mortgagelending` deployment was observed to have two running replicas while the desired replica count is one.  This extra replica consumes unnecessary resources and potentially introduces data inconsistencies if not synchronized properly. This issue is classified as P1 due to the potential for resource exhaustion and data integrity concerns.
 
 ## Prerequisites
 
-* **Tools:** `kubectl` command-line tool, access to Kubernetes cluster monitoring tools (e.g., Prometheus, Grafana).
-* **Access:**  `kubectl` configured with access to the affected Kubernetes cluster.  Sufficient permissions to create, delete, and modify deployments, pods, and nodes.
-* **Credentials:** Valid credentials for accessing the Kubernetes cluster and monitoring tools.
+* **Tools:**  `kubectl` command-line tool.
+* **Access:**  Kubernetes cluster access with sufficient permissions to manage deployments in the namespace where `mortgagelending` is deployed.
+* **Credentials:** Valid Kubernetes configuration file (`kubeconfig`).
 
 
 ## Step-by-Step Implementation Instructions
 
-**1. Identify Resource Bottlenecks:**
 
-```bash
-kubectl top nodes
-kubectl top pods -n <mortgagelending-namespace>
-```
+1. **Verify Current Replica Count:**
+   ```bash
+   kubectl get deployment mortgagelending -n <namespace>
+   ```
+   Replace `<namespace>` with the namespace where your deployment resides. Confirm that `REPLICAS` shows `1/2` or similar, indicating the discrepancy.
 
-**2. Analyze Pod Resource Requests and Limits:**
+2. **Scale Down the Deployment:**
+   ```bash
+   kubectl scale deployment mortgagelending --replicas=1 -n <namespace>
+   ```
+   This command instructs Kubernetes to scale down the deployment to the desired replica count of one.
 
-```bash
-kubectl describe deployment <mortgagelending-deployment> -n <mortgagelending-namespace>
-kubectl get pods -n <mortgagelending-namespace> -o json | jq '.items[].spec.containers[].resources'
-```
+3. **Monitor the Scaling Process:**
+   ```bash
+   kubectl rollout status deployment/mortgagelending -n <namespace>
+   ```
+   Observe the output to ensure the scaling down process completes successfully.  Wait until the rollout is complete before proceeding.
 
-**3. Option 1: Scale Up Nodes (Preferred):**
-
-* **Increase Node Count:**  If cluster autoscaler is enabled, verify its configuration and trigger it manually if necessary. If not, manually add more nodes with sufficient resources.
-    ```bash
-    # Example using a cloud provider CLI (replace with your provider's command)
-    gcloud container clusters resize <cluster-name> --size=<new-size>
-    ```
-* **Monitor Node Readiness:** Ensure the new nodes join the cluster and become ready.
-    ```bash
-    kubectl get nodes
-    ```
-
-**4. Option 2: Optimize Resource Requests and Limits (If Scaling Up is Not Immediately Feasible):**
-
-* **Adjust Resource Requests/Limits:** If analysis reveals overly generous resource allocations, reduce them to more realistic values. Modify the deployment YAML and apply the changes.
-    ```bash
-    kubectl edit deployment <mortgagelending-deployment> -n <mortgagelending-namespace>
-    ```
-    (Update `resources.requests` and `resources.limits` for each container)
-* **Restart Pods:**  Restart the `mortgagelending` pods to apply the new resource limits.
-    ```bash
-    kubectl rollout restart deployment <mortgagelending-deployment> -n <mortgagelending-namespace>
-    ```
-
-**5. Option 3: Terminate Non-Essential Pods (Last Resort):**
-
-* **Identify Low-Priority Pods:** Using `kubectl top pods` and knowledge of application dependencies, identify less critical pods consuming significant resources.
-* **Terminate Pods:**  Terminate the identified pods to free up resources.
-    ```bash
-    kubectl delete pod <pod-name> -n <namespace>
-    ```
-    **Caution:** Ensure terminating these pods does not cause cascading failures.
+4. **Confirm Replica Count:**
+   ```bash
+   kubectl get deployment mortgagelending -n <namespace>
+   ```
+    Verify that the `REPLICAS` count now shows `1/1`.
 
 
 ## Verification Procedures
 
-* **Check Pod Status:** Verify that `mortgagelending` pods are running and in a `Ready` state.
-    ```bash
-    kubectl get pods -n <mortgagelending-namespace>
-    ```
-* **Application Health Check:**  Perform application-specific health checks (e.g., accessing the application's endpoint) to ensure it's functioning correctly.
-* **Monitor Resource Utilization:**  Continue monitoring resource utilization to ensure the issue is resolved and doesn't reoccur.
+* **Check Pod Status:**
+   ```bash
+   kubectl get pods -l app=mortgagelending -n <namespace>
+   ```
+   Ensure only one pod is running and in a `Running` or `Ready` state.  Replace `app=mortgagelending` with the appropriate label selector if different.
+
+* **Application Health Check:**  Perform application-specific health checks (e.g., accessing the application endpoint, running integration tests) to confirm that the application is functioning correctly with a single replica.
 
 
 ## Rollback Instructions
 
-* **Option 1 (Scaling Up):** If scaling up caused unintended issues, reduce the node count back to the original size.
-* **Option 2 (Resource Optimization):** Revert the deployment YAML to the previous version with the original resource requests and limits.
-* **Option 3 (Pod Termination):** Restart any terminated non-essential pods.
+If the scaling down causes issues, you can quickly scale back up to two replicas:
 
+```bash
+kubectl scale deployment mortgagelending --replicas=2 -n <namespace>
+```
+
+Monitor the rollout status as described in step 3.  Investigate the root cause of the issue after restoring the original replica count.
 
 ## Troubleshooting
 
-* **Pods Stuck in Pending State:** Check for persistent volume claims (PVCs) issues, insufficient quota, or other scheduling constraints.
-* **Nodes Not Joining Cluster:** Verify network connectivity, DNS resolution, and cloud provider configuration.
-* **Application Errors After Resource Adjustments:** Check application logs for errors related to resource constraints.  The application might need code changes to handle lower resource limits effectively.
-* **Preemption Still Failing:** Review Pod PriorityClass settings and ensure that the `mortgagelending` pods have a sufficiently high priority.  Check for resource quotas that might be preventing preemption.
+**Issue:** `kubectl scale` command fails with permission denied.
+
+**Solution:** Ensure your kubeconfig has the necessary permissions to modify deployments in the target namespace. Contact your cluster administrator if needed.
 
 
-This runbook provides a starting point.  Adapt and expand it based on your specific environment and application requirements. Remember to document any deviations or additional steps taken during the incident resolution. 
+**Issue:**  Scaling down completes, but the application is not functioning correctly.
+
+**Solution:**  Check application logs for errors:
+```bash
+kubectl logs -l app=mortgagelending -n <namespace>
+```
+Review recent code changes or configuration updates that might have introduced issues. Consider rolling back to a previous working version of the application.
+
+
+**Issue:**  Scaling down takes an unusually long time.
+
+**Solution:** Investigate potential resource constraints on the cluster. Check pod events for any issues during termination:
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+Monitor cluster resource usage to identify bottlenecks.
+
+
+This runbook provides a detailed guide for resolving the redundant replica issue. If you encounter problems not covered here, escalate the issue to the appropriate support team.  Remember to update this runbook with any new information or troubleshooting steps learned during future incidents.

@@ -43,7 +43,7 @@ def handle_query():
     # Trigger runbook generation using the response text as the issue description
     try:
         result = subprocess.run(
-            ['python', 'f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\backendrunbook.py', response_text],
+            ['python', 'f:\\study\\hackathon\\testing-module\\agent-integrate\\runbook.py', response_text],
             capture_output=True,
             text=True
         )
@@ -53,7 +53,7 @@ def handle_query():
                 "response": response_text,
                 "runbook_status": "success",
                 "runbook_file": output_file,
-                "runbook_path": f"f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\{output_file}"
+                "runbook_path": f"f:\\study\\hackathon\\testing-module\\agent-integrate\\{output_file}"
             })
         else:
             return jsonify({
@@ -76,13 +76,13 @@ def handle_heal():
     try:
         # Call runbook.py with the issue description
         result = subprocess.run(
-            ['python', 'f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\runbook.py', issue_description],
+            ['python', 'f:\\study\\hackathon\\testing-module\\agent-integrate\\runbook.py', issue_description],
             capture_output=True,
             text=True
         )
         if result.returncode == 0:
             output_file = "runbook.md"  # Default output file name
-            return jsonify({"status": "success", "output": result.stdout, "file": output_file, "path": f"f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\{output_file}"})
+            return jsonify({"status": "success", "output": result.stdout, "file": output_file, "path": f"f:\\study\\hackathon\\testing-module\\agent-integrate\\{output_file}"})
         else:
             return jsonify({"status": "error", "error": result.stderr}), 500
     except Exception as e:
@@ -96,13 +96,13 @@ def generate_runbook():
     try:
         # Call runbook.py with the issue description
         result = subprocess.run(
-            ['python', 'f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\backend\\runbook.py', issue_description],
+            ['python', 'f:\\study\\hackathon\\testing-module\\agent-integrate\\runbook.py', issue_description],
             capture_output=True,
             text=True
         )
         if result.returncode == 0:
             output_file = "runbook.md"  # Default output file name
-            return jsonify({"status": "success", "output": result.stdout, "file": output_file, "path": f"f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\{output_file}"})
+            return jsonify({"status": "success", "output": result.stdout, "file": output_file, "path": f"f:\\study\\hackathon\\testing-module\\agent-integrate\\{output_file}"})
         else:
             # Check if the error is due to both models failing
             if "Both OpenAI and Gemini models are unavailable" in result.stdout or "Unable to generate runbook" in result.stdout:
@@ -122,13 +122,13 @@ def generate_heal_script():
     try:
         # Call heal_agent.py with the issue description
         result = subprocess.run(
-            ['python', 'f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\backend\\heal_agent.py', issue_description],
+            ['python', 'f:\\study\\hackathon\\testing-module\\agent-integrate\\heal_agent.py', issue_description],
             capture_output=True,
             text=True
         )
         if result.returncode == 0:
             output_file = "heal_script.sh"  # Default output file name
-            return jsonify({"status": "success", "output": result.stdout, "file": output_file, "path": f"f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\backend\\{output_file}"})
+            return jsonify({"status": "success", "output": result.stdout, "file": output_file, "path": f"f:\\study\\hackathon\\testing-module\\agent-integrate\\{output_file}"})
         else:
             return jsonify({"status": "error", "error": result.stderr}), 500
     except Exception as e:
@@ -139,7 +139,7 @@ def get_incidents():
     try:
         # Serve the sample_incidents.json file
         return send_from_directory(
-            directory='f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\backend\\',
+            directory='f:\\study\\hackathon\\testing-module\\agent-integrate',
             path='sample_incidents.json',
             as_attachment=False
         )
@@ -151,7 +151,7 @@ def get_change_requests():
     try:
         # Serve the sample_change_requests.json file
         return send_from_directory(
-            directory='f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\backend\\',
+            directory='f:\\study\\hackathon\\testing-module\\agent-integrate',
             path='sample_change_requests.json',
             as_attachment=False
         )
@@ -174,7 +174,7 @@ def cr_tracker():
         result = subprocess.run(
             [
                 'python',
-                'f:\\study\\hackathon\\testing-module\\wfagentspace\\hackathon_v1\\ai-agent\\backend\\cr_analysis_agent.py',
+                'f:\\study\\hackathon\\testing-module\\agent-integrate\\cr_analysis_agent.py',
                 json.dumps(incident),
                 json.dumps(change_requests)
             ],
@@ -189,6 +189,31 @@ def cr_tracker():
             return jsonify({"error": result.stderr.strip()}), 500
     except Exception as e:
         print(f"Exception in /cr_tracker: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/apps_affected', methods=['POST'])
+def apps_affected():
+    data = request.json
+    incident_id = data.get('incident_id', None)
+
+    if not incident_id:
+        return jsonify({"error": "Incident ID is missing."}), 400
+
+    try:
+        # Call mcp_integration.py with the incident ID
+        result = subprocess.run(
+            ['python', 'f:\\study\\hackathon\\testing-module\\agent-integrate\\mcp_integration.py', incident_id],
+            capture_output=True,
+            text=True
+        )
+
+        if result.returncode == 0:
+            return jsonify({"apps_affected_analysis": result.stdout.strip()})
+        else:
+            print(f"Error from mcp_integration.py: {result.stderr.strip()}")  # Log the error
+            return jsonify({"error": result.stderr.strip()}), 500
+    except Exception as e:
+        print(f"Exception in /apps_affected: {str(e)}")  # Log the exception
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':

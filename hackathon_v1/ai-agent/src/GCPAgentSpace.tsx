@@ -250,6 +250,48 @@ const GCPAgentSpace = () => {
     }
   };
 
+  const handleAppsAffected = async () => {
+    if (!activeIncident) {
+      alert("No incident selected. Please select an incident first.");
+      return;
+    }
+  
+    const timestamp = getCurrentTimestamp();
+  
+    // Track action in history
+    setActionHistory([
+      {
+        id: actionHistory.length + 1,
+        action: 'apps_affected',
+        app: activeIncident,
+        timestamp,
+        user: 'SRE Admin'
+      },
+      ...actionHistory
+    ]);
+  
+    try {
+      // Call the backend to trigger mcp_integration.py
+      const response = await axios.post('http://127.0.0.1:5000/apps_affected', { incident_id: activeIncident });
+  
+      const appsAffectedAnalysis = response.data.apps_affected_analysis;
+  
+      // Add the analysis to the response box
+      setQueryResponses([
+        {
+          id: queryResponses.length + 1,
+          query: `Apps Affected Analysis for Incident: ${activeIncident}`,
+          response: appsAffectedAnalysis,
+          timestamp: getCurrentTimestamp()
+        },
+        ...queryResponses
+      ]);
+    } catch (error) {
+      console.error('Error analyzing apps affected:', error);
+      alert("Error analyzing apps affected. Please try again.");
+    }
+  };
+
   const priorityOrder = { P1: 1, P2: 2, P3: 3 }; // Define priority order
 
   return (
@@ -315,7 +357,7 @@ const GCPAgentSpace = () => {
         {/* Agents Panel */}
         <div style={{ padding: '16px', borderTop: '1px solid #555', marginTop: '16px' }}>
           <h2 style={{ fontWeight: 'bold', fontSize: '18px', marginBottom: '16px' }}>
-            Agents
+            Pick an Agent
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <button 
@@ -326,11 +368,18 @@ const GCPAgentSpace = () => {
               Heal Incident
             </button>
             <button 
-              style={{ width: '100%', padding: '8px 16px', textAlign: 'left', borderRadius: '4px', backgroundColor: '#555', color: '#fff', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+              style={{ width: '100%', padding: '8px 16px', textAlign: 'left', borderRadius: '4px', backgroundColor: '#007bff', color: '#fff', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
               onClick={handleCRTracker} // Updated to handle CR Tracker
             >
               <Search size={16} style={{ marginRight: '8px' }} />
               CR Tracker
+            </button>
+            <button 
+              style={{ width: '100%', padding: '8px 16px', textAlign: 'left', borderRadius: '4px', backgroundColor: '#007bff', color: '#fff', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+              onClick={handleAppsAffected} // New button for Apps Affected
+            >
+              <AlertCircle size={16} style={{ marginRight: '8px' }} />
+              Apps Affected
             </button>
           </div>
         </div>

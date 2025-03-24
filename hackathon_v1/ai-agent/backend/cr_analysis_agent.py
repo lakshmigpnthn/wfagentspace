@@ -2,11 +2,10 @@ import os
 import sys
 import google.generativeai as genai
 from typing import Optional
-from datetime import datetime
 
 # Hardcode the API keys
 os.environ["OPENAI_API_KEY"] = "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"
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDDkEk07-Y9ISJXKTWyJBArz19mYXMPEwM"
+os.environ["GOOGLE_API_KEY"] = "AIzaSyALENrXIslUHsrTlwHqV_qpItxC17J08co"
 
 def analyze_cr_with_model(incident_details, change_requests, openai_api_key=None, gemini_api_key=None, openai_model="gpt-3.5-turbo"):
     """
@@ -22,41 +21,6 @@ def analyze_cr_with_model(incident_details, change_requests, openai_api_key=None
     Returns:
         str: Analysis result from the model.
     """
-    # Validate and filter change requests based on multiple parameters
-    try:
-        incident_start_date = datetime.fromisoformat(incident_details.get('start_date'))
-    except ValueError:
-        return "Invalid incident start date format. Please provide a valid ISO 8601 date."
-
-    incident_issue = incident_details.get('issue', '').lower()
-    incident_components = set(incident_details.get('application_affected', '').lower().split(','))
-    filtered_change_requests = []
-
-    for cr in change_requests:
-        try:
-            cr_date = datetime.fromisoformat(cr['implementation_date'])
-        except ValueError:
-            continue  # Skip CRs with invalid date formats
-
-        cr_description = cr['description'].lower()
-        cr_components = set(map(str.lower, cr['affected_components']))
-
-        # Check date correlation (within 7 days before the incident)
-        date_relevant = (incident_start_date - cr_date).days <= 7 and (incident_start_date - cr_date).days >= 0
-
-        # Check if the issue description matches or is relevant to the CR description
-        description_relevant = any(keyword in cr_description for keyword in incident_issue.split())
-
-        # Check if affected components overlap
-        components_relevant = bool(incident_components & cr_components)
-
-        # Include the CR if it meets all three criteria
-        if date_relevant and description_relevant and components_relevant:
-            filtered_change_requests.append(cr)
-
-    if not filtered_change_requests:
-        return "No change requests are relevant to this incident based on the provided details."
-
     # Prepare the prompt
     prompt = f"""
 You are an expert IT analyst. Analyze the following incident and change requests to determine which changes might have caused or impacted the incident.
@@ -69,7 +33,7 @@ Incident Details:
 
 Change Requests:
 """
-    for cr in filtered_change_requests:
+    for cr in change_requests:
         prompt += f"""
 - **Change ID**: {cr['change_id']}
   - **Description**: {cr['description']}
@@ -87,7 +51,7 @@ Analyze the incident and change requests. Identify which change requests might h
   - **Timing Correlation**: <Timing>  
   - **Affected Components**: <Components>  
 
-Ensure the output is strictly based on the provided data. Do not make assumptions about incorrect or missing data. Avoid hypothetical scenarios.
+Ensure the output is neatly formatted in Markdown with proper line breaks, bullet points, and spacing for readability. Do not include any error messages or irrelevant information.
 """
 
     # Commenting out OpenAI-related code
