@@ -28,7 +28,7 @@ PlatformNexus integrates LLM with domain-specific agents to create a comprehensi
 ### 2.1 High-Level Architecture
 PlatformNexus follows a modular, decoupled architecture:
 
-```Placeholder for arch diagram```
+- Architecture Diagram [https://github.com/ewfx/gaipl-troubleshooters/blob/main/artifacts/arch/PlatformNexus.png]
 
 ### 2.2 Component Description
 
@@ -97,16 +97,19 @@ This agent analyzes application dependencies:
 #### 3.1.2 Backend
    - Python 3.8+
    - Google GenAI SDK
+   - OpenAi SDK
    - Flask
 
 #### 3.1.3 AI and ML
-   - API Calls to gemini-1.5-pro LLM 
+   - API Calls to gemini-1.5-pro 
+   - API Calls to OpenAi gpt-3.5-turbo
    - Prompt engineering and context management
    - Response parsing and validation
 
 #### 3.1.4 Data Storage
    - Json files used for data storage 
    - Change Reqeusts and Incidents Data
+   - MCP to provide data context to LLM
    
 
 
@@ -163,9 +166,21 @@ This agent analyzes application dependencies:
 
 ### 4.3 Change Request Tracker User Journey
 
-1. **Test 1**
-   - aaa
-   - bbb
+1. **Query Submission**
+   - User enters natural language query
+   - Frontend validates and sends query to LLM
+   - Agent can check corelation between Incident and Change
+   
+
+2. **CR Affected Components**
+   - Specilized Agent analyes Incident and CR 
+   - Determines potential impact of CR
+   - Identifies if a CR cuased the Incident
+   - Agent identifies potential reason for application impact
+   - Provides analysis on affected components
+   - Provides possible remediation measures
+
+
 
 ## 6. Deployment and Operations
 
@@ -216,4 +231,7 @@ This agent analyzes application dependencies:
 
 ## Appendix B: References
 
-1. To be filled
+1. Google Gemini SDK [https://ai.google.dev/gemini-api/docs/sdks]
+2. Anthropic Model Context Protocol SDK [https://github.com/modelcontextprotocol]
+3. OpenAI SDK [https://platform.openai.com/docs/libraries?language=python]
+4. React Developer Quick Start [https://react.dev/learn]
