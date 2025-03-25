@@ -89,16 +89,25 @@ This agent analyzes application dependencies:
 ### 3.1 Technology Stack
 
 #### 3.1.1 Frontend
-```To be filled```
+   - React 
+   - Node.js
+   - UI Rendering
+   - API Request management
 
 #### 3.1.2 Backend
-```To be filled```
+   - Python 3.8+
+   - Google GenAI SDK
+   - Flask
 
 #### 3.1.3 AI and ML
-```To be filled```
+   - API Calls to gemini-1.5-pro LLM 
+   - Prompt engineering and context management
+   - Response parsing and validation
 
 #### 3.1.4 Data Storage
-```To be filled```
+   - Json files used for data storage 
+   - Change Reqeusts and Incidents Data
+   
 
 
 ## 4. System Interactions and User Journeys
